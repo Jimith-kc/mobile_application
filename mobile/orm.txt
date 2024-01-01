@@ -1,0 +1,266 @@
+class Mobiles(models.Model):
+    name=models.CharField(max_length=200,unique=True)
+    price=models.PositiveIntegerField()
+    brand=models.CharField(max_length=200)
+    specs=models.CharField(max_length=200)
+    display=models.CharField(max_length=200)
+
+
+
+from mobile.models import Mobiles
+    orm queries
+
+ syntax:   Modelname.objects.create(field_name=value,....)
+
+ eg:   Mobiles.objects.create(name="samsung a31",price=35000, brand="samsung",specs="12gb ram",display="amoled")
+
+
+
+  =====orm querry for fetch all records====
+
+  Modelname.objects.all()
+  qs=Mobiles.objects.all()
+
+  =======orm query for selecting a specific object===
+
+  Modelname.obects.get(id=2)
+  qs=Modelname.objects.get(id=2)
+
+  ====orm query for filter record by specific char====
+  
+  Modelname.objects.filter(condition)
+  qs=Mobiles.objects.filter(brand="samsung") 
+
+  qs=Mobiles.objects.filter(price__lte=50000)
+
+field lookups
+<= __lte
+>= __gte
+< __lt
+> __gt
+
+=====mobiles without brand names samsung=====
+
+Modelname.objects.exclude(condition)
+qs=Mobiles.objects.exclude(brand="samsung")
+
+===orm for delete an object===
+Mobiles.objects.filter(id=3).delete()
+
+===orm for update an object===
+Mobiles.objects.filter(id=1).update(price=65000,specs="18gb")
+
+
+===orm query for sort ascending and descending order====
+
+qs=Mobiles.objects.all().order_by("price") ascending
+qs=Mobiles.objects.all().order_by("-price") descending
+
+===query for print records in a column ===
+
+qs=Mobiles.objects.all().values("brand")
+
+qs=Mobiles.objects.all().values_list("brand")
+
+qs=Mobiles.objects.all().values_list("brand",flat=True)
+
+
+class MobilesCreateView(View):
+    def get(self,request,*args,**kwargs):
+        return render(request,"mobile_add.html")
+    def post(self,request,*args,**kwargs):
+        print(request.POST)
+
+        Mobiles.objects.create(
+            name=request.POST.get("name"),
+            price=request.POST.get("price"),
+            brand=request.POST.get("brand"),
+            specs=request.POST.get("specs"),
+            display=request.POST.get("display"),
+        )
+
+        return render(request,"mobile_add.html")
+
+
+
+
+
+========================================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <title>mobile new</title>
+</head>
+<body>
+    {%if messages%}
+        {%for m in messages%}
+            {%if m.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{m}}</strong> You should check in on some of those fields below.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {%endif%}
+            {%if m.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{m}}</strong> You should check in on some of those fields below.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {%endif%}
+            
+        {%endfor%}
+    {%endif%}
+    <div class="container d-flex justify-content-center">
+        
+        <form action="" method="post" class="w-50 border shadow p-5 mt-5">
+            <h2 class="text-center mb-3">Add New Mobile</h2>
+            {%csrf_token%}
+    
+            {{form.as_p}}
+    
+            <p>
+                <button type="submit" class="btn btn-warning ms-5">Add</button>
+            </p>
+        </form>
+    </div>
+</body>
+</html>
+=====================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Mobile_details</title>
+</head>
+<body>
+    <div class="container d-flex justify-content-center mt-5">
+        <div class="card" style="width: 18rem;">
+            <div class="card-header">
+                Name:>{{data.name}}
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item fa-dollar-sign">price:> {{data.price}}</li>
+              <li class="list-group-item">Brand:> {{data.brand}}</li>
+              <li class="list-group-item">Specification:> {{data.specs}}</li>
+              <li class="list-group-item fa-display">Display:> {{data.display}}</li>
+            </ul>
+          </div>
+    </div>
+
+</body>
+</html>
+=============================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <title>mobile new</title>
+</head>
+<body>
+    {%if messages%}
+        {%for m in messages%}
+            {%if m.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{m}}</strong> You should check in on some of those fields below.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {%endif%}
+            {%if m.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{m}}</strong> You should check in on some of those fields below.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {%endif%}
+            
+        {%endfor%}
+    {%endif%}
+
+    <div class="container d-flex justify-content-center">
+                <h1 class="text-center mb-3">Change Mobile</h1>
+                <form action="" method="post " class="w-50 border shadow p-5 mt-5">
+                    {%csrf_token%}
+
+                    {{form.as_p}}
+
+                <p>
+                    <button type="submit"class="btn btn-warning ms-5">Change</button>
+                </p>
+                </form> 
+    </div>
+    
+</body>
+</html>
+=======================================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Mobiles</title>
+</head>
+<body class="bg-primary-subtle">
+
+    {%if messages%}
+        {%for m in messages%}
+            {%if m.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{m}}</strong> You should check in on some of those fields below.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {%endif%}
+            {%if m.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{m}}</strong> You should check in on some of those fields below.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {%endif%}
+            
+        {%endfor%}
+    {%endif%}
+    <div class="container">
+        <table class="table table-dark table-striped">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Brand</th>
+                <th>Specs</th>
+                <th>Display</th>
+            </tr>   
+        {%for mob in data%}
+            <tr>
+                <td>{{mob.name}}</td>
+                <td>{{mob.price}}</td>
+                <td>{{mob.brand}}</td>
+                <td>{{mob.specs}}</td>
+                <td>{{mob.display}}</td>
+                <td>
+                    <a href="{% url 'mobile-detail' mob.id %}" class="btn btn-outline-info">View</a>
+                </td>
+                <td>
+                    <a href="{% url 'mobile-remove' mob.id %}" class="btn btn-outline-danger">Remove</a>
+                </td>
+                <td>
+                    <a href="{% url 'mobile-change' mob.id %}" class="btn btn-outline-secondary">Change</a>
+                </td>
+            </tr>
+
+        {%endfor%}
+</body>
+</html>
+
+
+
+
+
+<!----image upload and display-->

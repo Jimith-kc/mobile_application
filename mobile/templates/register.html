@@ -1,0 +1,17 @@
+{%extends 'base.html'%}
+{%block body_block%}
+    <div class="container d-flex justify-content-center">
+        
+        <form action="" method="post" class="w-50 border shadow p-5 mt-5">
+            <h2 class="text-center mb-3">Add New Mobile</h2>
+            {%csrf_token%}
+    
+            {{form.as_p}}
+    
+            <p>
+                <button type="register" class="btn btn-warning ms-5">Register</button>
+            </p>
+        </form>
+    </div> 
+
+{%endblock%}

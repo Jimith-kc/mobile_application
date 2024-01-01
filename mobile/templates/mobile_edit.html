@@ -1,0 +1,21 @@
+{%extends 'base.html'%}
+{%block body_block%}
+        <div class="container d-flex justify-content-center">
+            {%if data.picture%}
+                <img src="{{data.picture.url}}" alt="">
+            {%endif%}
+          
+            <form action="" method="post" enctype="multipart/form-data" class="w-50 border shadow p-5 mt-5">
+                <h2 class="text-center mb-3">change Mobile</h2>
+                {%csrf_token%}
+
+                {{form.as_p}}
+
+                <p>
+                    <button type="submit" class="btn btn-warning ms-5">change</button>
+                </p>
+            </form>
+        </div>
+    
+    
+{%endblock%}
